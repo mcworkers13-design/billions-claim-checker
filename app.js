@@ -1,22 +1,26 @@
-// ==========================================================================
-// 🚀 APP.JS: CLIENT-SIDE REACTION, ANCHOR LOGIC, INTERACTIVE GRAPHICS
-// ==========================================================================
+/**
+ * @file app.js
+ * @description Core client-side execution engine for the Billions Network ($BILL) Allocation Explorer.
+ * Implements high-performance fuzzy searching, dynamic data visualization, and real-time syncing.
+ * @author yukki
+ * @license MIT
+ */
 
 const TOTAL_ALLOCATED_SUPPLY = 100923053.37; // Total allocated $BILL rewards supply
 
-// Global state variables
+// Application state management
 let state = {
     filteredData: [],
     currentPage: 1,
     pageSize: 25,
-    sortField: 'amount', // default sorted by amount descending
-    sortDirection: 'desc',
-    searchTerm: '',
-    selectedBracket: 'all',
-    selectedTimeframe: 'all' // 🕒 Added timeframe state
+    sortField: 'amount', // Primary sorting field (default: amount)
+    sortDirection: 'desc', // Primary sorting direction
+    searchTerm: '', // Active search text filter
+    selectedBracket: 'all', // Active tier/bracket filter
+    selectedTimeframe: 'all' // Active timeframe filter
 };
 
-// Elements DOM hooks
+// DOM Element References mapping
 const elements = {
     statWallets: document.getElementById('stat-total-wallets'),
     statTokens: document.getElementById('stat-total-tokens'),
@@ -27,7 +31,7 @@ const elements = {
     statProgressBar: document.getElementById('stat-progress-bar'),
     countdownTimer: document.getElementById('countdown-timer'),
     
-    // 🕒 Timeframe elements
+    // Timeframe selector references
     timeframeSelector: document.getElementById('timeframe-selector'),
     tfCount: document.getElementById('tf-count'),
     tfAmount: document.getElementById('tf-amount'),
@@ -49,7 +53,7 @@ const elements = {
 };
 
 // ==========================================================================
-// 📊 METRICS & CHART COMPUTATIONS (100% Dynamic)
+// METRICS AND CHART COMPUTATIONS (DYNAMIC ENGINE)
 // ==========================================================================
 
 function initAnalytics() {
@@ -244,7 +248,7 @@ function renderVelocityChart() {
 }
 
 // ==========================================================================
-// ⚡ CORE TABLE OPERATIONS (Fuzzy Search, Sort, Filter, Render)
+// CORE LEDGER TRANSACTIONS (FILTER, SORT, PAGINATE, AND RENDER)
 // ==========================================================================
 
 function updateDataGrid() {
@@ -527,7 +531,7 @@ function showToast(message) {
 }
 
 // ==========================================================================
-// 🔔 ATTACH DOM LISTENERS & HANDLERS
+// INTERACTIVE DOM EVENT LISTENERS & USER ACTIONS
 // ==========================================================================
 
 function setupEventListeners() {
@@ -619,7 +623,7 @@ function setupEventListeners() {
 }
 
 // ==========================================================================
-// 🔄 REAL-TIME CLIENT-SIDE SYNCING (Blockscout API Integration)
+// REAL-TIME BLOCKCHAIN SYNCHRONIZATION (Blockscout API Integration)
 // ==========================================================================
 
 let countdownSeconds = 30;
@@ -753,7 +757,7 @@ async function syncLatestClaims() {
 }
 
 // ==========================================================================
-// 🚀 INITIATE APP
+// APPLICATION INITIALIZATION ENTRY POINT
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
