@@ -129,6 +129,26 @@
                     <h2><i class="fa-solid fa-list-check"></i> CLAIMS EXPLORER LEDGER</h2>
                     <p class="panel-sub">Real-time searchable database of all 9,344 historical claim allocations</p>
                 </div>
+                
+                <!-- 🕒 TIMEFRAME CHECKER BAR -->
+                <div class="timeframe-checker-bar">
+                    <div class="timeframe-label">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Timeframe Checker:
+                    </div>
+                    <div class="timeframe-buttons" id="timeframe-selector">
+                        <button class="tf-btn active" data-tf="all">All Time</button>
+                        <button class="tf-btn" data-tf="30d">Last 30 Days</button>
+                        <button class="tf-btn" data-tf="7d">Last 7 Days</button>
+                        <button class="tf-btn" data-tf="24h">Last 24 Hours</button>
+                        <button class="tf-btn" data-tf="1h">Last 1 Hour</button>
+                        <button class="tf-btn" data-tf="5m">Last 5 Mins</button>
+                        <button class="tf-btn" data-tf="1m">Last 1 Min</button>
+                    </div>
+                    <div class="timeframe-summary">
+                        Filtered: <span id="tf-count">0</span> claims | <span id="tf-amount">0.00</span> BILL
+                    </div>
+                </div>
+
                 <div class="search-filter-wrapper">
                     <!-- Search Input -->
                     <div class="search-box">

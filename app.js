@@ -12,7 +12,8 @@ let state = {
     sortField: 'amount', // default sorted by amount descending
     sortDirection: 'desc',
     searchTerm: '',
-    selectedBracket: 'all'
+    selectedBracket: 'all',
+    selectedTimeframe: 'all' // 🕒 Added timeframe state
 };
 
 // Elements DOM hooks
@@ -25,6 +26,11 @@ const elements = {
     statProgressPct: document.getElementById('stat-progress-pct'),
     statProgressBar: document.getElementById('stat-progress-bar'),
     countdownTimer: document.getElementById('countdown-timer'),
+    
+    // 🕒 Timeframe elements
+    timeframeSelector: document.getElementById('timeframe-selector'),
+    tfCount: document.getElementById('tf-count'),
+    tfAmount: document.getElementById('tf-amount'),
     
     searchInput: document.getElementById('search-input'),
     clearSearchBtn: document.getElementById('clear-search-btn'),
@@ -242,6 +248,33 @@ function renderVelocityChart() {
 // ==========================================================================
 
 function updateDataGrid() {
+    // Calculate global timeframe claims count & sums based on entire dataset
+    let tfCount = 0;
+    let tfSum = 0;
+    
+    claimsData.forEach(c => {
+        let matches = true;
+        if (state.selectedTimeframe !== 'all') {
+            const claimDate = new Date(c.timestamp.replace(' ', 'T') + 'Z');
+            const now = new Date();
+            const diffMs = now - claimDate;
+            
+            if (state.selectedTimeframe === '1m') matches = diffMs <= 60 * 1000;
+            else if (state.selectedTimeframe === '5m') matches = diffMs <= 5 * 60 * 1000;
+            else if (state.selectedTimeframe === '1h') matches = diffMs <= 60 * 60 * 1000;
+            else if (state.selectedTimeframe === '24h') matches = diffMs <= 24 * 60 * 60 * 1000;
+            else if (state.selectedTimeframe === '7d') matches = diffMs <= 7 * 24 * 60 * 60 * 1000;
+            else if (state.selectedTimeframe === '30d') matches = diffMs <= 30 * 24 * 60 * 60 * 1000;
+        }
+        if (matches) {
+            tfCount++;
+            tfSum += c.amount;
+        }
+    });
+    
+    if (elements.tfCount) elements.tfCount.innerText = tfCount.toLocaleString();
+    if (elements.tfAmount) elements.tfAmount.innerText = tfSum.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
     // 1. Fuzzy Filter
     state.filteredData = claimsData.filter(claim => {
         // Search Term Check
@@ -265,7 +298,22 @@ function updateDataGrid() {
             else if (state.selectedBracket === 'test') matchesBracket = amt < 100;
         }
         
-        return matchesSearch && matchesBracket;
+        // Timeframe Filter Check
+        let matchesTimeframe = true;
+        if (state.selectedTimeframe !== 'all') {
+            const claimDate = new Date(claim.timestamp.replace(' ', 'T') + 'Z');
+            const now = new Date();
+            const diffMs = now - claimDate;
+            
+            if (state.selectedTimeframe === '1m') matchesTimeframe = diffMs <= 60 * 1000;
+            else if (state.selectedTimeframe === '5m') matchesTimeframe = diffMs <= 5 * 60 * 1000;
+            else if (state.selectedTimeframe === '1h') matchesTimeframe = diffMs <= 60 * 60 * 1000;
+            else if (state.selectedTimeframe === '24h') matchesTimeframe = diffMs <= 24 * 60 * 60 * 1000;
+            else if (state.selectedTimeframe === '7d') matchesTimeframe = diffMs <= 7 * 24 * 60 * 60 * 1000;
+            else if (state.selectedTimeframe === '30d') matchesTimeframe = diffMs <= 30 * 24 * 60 * 60 * 1000;
+        }
+        
+        return matchesSearch && matchesBracket && matchesTimeframe;
     });
     
     // 2. Apply Sorting
@@ -546,6 +594,28 @@ function setupEventListeners() {
             updateDataGrid();
         });
     });
+    
+    // 5. Timeframe Selector click listeners
+    if (elements.timeframeSelector) {
+        elements.timeframeSelector.querySelectorAll('.tf-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active classes
+                elements.timeframeSelector.querySelectorAll('.tf-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Set active to current
+                this.classList.add('active');
+                
+                // Update state & pagination
+                state.selectedTimeframe = this.getAttribute('data-tf');
+                state.currentPage = 1;
+                
+                // Re-render
+                updateDataGrid();
+            });
+        });
+    }
 }
 
 // ==========================================================================
