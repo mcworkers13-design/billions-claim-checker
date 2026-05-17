@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billions Network ($BILL) - Allocation Explorer</title>
+    <!-- Fonts & Icons CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background glowing orbs for cyberpunk ambient aesthetic -->
+    <div class="orb-container">
+        <div class="orb orb-primary"></div>
+        <div class="orb orb-secondary"></div>
+        <div class="orb orb-tertiary"></div>
+    </div>
+
+    <div class="dashboard-wrapper">
+        <!-- HEADER -->
+        <header class="main-header">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-circle-nodes logo-spin"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>BILLIONS <span>NETWORK</span></h1>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <p class="subtitle">ALLOCATION EXPLORER & ANALYTICS</p>
+                        <div class="live-update-badge" title="Auto-updating claims history live from Blockscout every 60 seconds">
+                            <span class="pulse-indicator"></span>
+                            <span id="countdown-timer">Syncing...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="contract-badges">
+                <a href="https://explorer.billions.network/token/0xb060E40C3B053C33D458f7105F95DA52741CAb62" target="_blank" class="badge">
+                    <span class="badge-label">Token $BILL</span>
+                    <span class="badge-value">0xb060...Ab62 <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                </a>
+                <a href="https://explorer.billions.network/address/0x4BB63E4E1AcC5750FD1a6aDF26520126D8c9d6C8" target="_blank" class="badge badge-accent">
+                    <span class="badge-label">Distributor</span>
+                    <span class="badge-value">0x4BB6...d6C8 <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                </a>
+            </div>
+        </header>
+
+        <!-- STATS PANEL GRID -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                <div class="stat-info">
+                    <h3>Total Claimants</h3>
+                    <p id="stat-total-wallets" class="stat-value">0</p>
+                    <p class="stat-sub">100% Unique Addresses</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+                <div class="stat-info">
+                    <h3>Total $BILL Claimed</h3>
+                    <p id="stat-total-tokens" class="stat-value">0 BILL</p>
+                    <p class="stat-sub">100% Auto-Staked</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="stat-info">
+                    <h3>Allocated Supply</h3>
+                    <p id="stat-allocated-supply" class="stat-value">100,923,053.37 BILL</p>
+                    <p class="stat-sub">Total TGE Reward Pool</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                <div class="stat-info" style="flex-grow: 1; min-width: 0;">
+                    <h3>Claim Pool Progress</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 2px;">
+                        <span id="stat-progress-pct" class="stat-value" style="font-size: 1.25rem;">0.00%</span>
+                        <span class="stat-sub" style="font-size: 0.65rem;">Of Supply Claimed</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="stat-progress-bar" class="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-crown"></i></div>
+                <div class="stat-info">
+                    <h3>Max Whale Claim</h3>
+                    <p id="stat-max-claim" class="stat-value">0 BILL</p>
+                    <p class="stat-sub" id="stat-max-holder">0xbc8b...fB5b</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHARTS SECTION -->
+        <section class="charts-section">
+            <div class="panel-card chart-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-chart-pie"></i> ALLOCATION DISTRIBUTION BRACKETS</h2>
+                    <p class="panel-sub">Division of claimed supply between retail participants and whale tiers</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+            <div class="panel-card chart-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-timeline"></i> DAILY CLAIM VELOCITY</h2>
+                    <p class="panel-sub">Velocity trends showing Token Generation Event (TGE) surge and daily stabilization</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="velocityChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN TABLE EXPLORER CARD -->
+        <main class="panel-card explorer-panel">
+            <div class="explorer-header-actions">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-list-check"></i> CLAIMS EXPLORER LEDGER</h2>
+                    <p class="panel-sub">Real-time searchable database of all 9,344 historical claim allocations</p>
+                </div>
+                <div class="search-filter-wrapper">
+                    <!-- Search Input -->
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="search-input" placeholder="Search by claimant address or exact amount..." autocomplete="off">
+                        <button id="clear-search-btn" class="clear-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <!-- Quick Filters -->
+                    <div class="filter-controls">
+                        <select id="bracket-filter">
+                            <option value="all">All Tiers / Brackets</option>
+                            <option value="whale">Whales (>= 1,000,000 BILL)</option>
+                            <option value="high">High Tier (100,000 - 999,999 BILL)</option>
+                            <option value="medium">Medium Tier (10,000 - 99,999 BILL)</option>
+                            <option value="supporter">Early Supporter (1,000 - 9,999 BILL)</option>
+                            <option value="retail">Standard Retail (500 - 999 BILL)</option>
+                            <option value="test">Testing (< 100 BILL)</option>
+                        </select>
+                        <select id="page-size-selector">
+                            <option value="10">10 entries</option>
+                            <option value="25" selected>25 entries</option>
+                            <option value="50">50 entries</option>
+                            <option value="100">100 entries</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-container">
+                <table id="claims-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="rank">Rank <i class="fa-solid fa-sort"></i></th>
+                            <th class="sortable" data-sort="address">Claimant Wallet Address <i class="fa-solid fa-sort"></i></th>
+                            <th class="sortable active-sort" data-sort="amount">Allocated Amount ($BILL) <i class="fa-solid fa-sort-down"></i></th>
+                            <th class="sortable" data-sort="timestamp">Claim Date & Time (UTC) <i class="fa-solid fa-sort"></i></th>
+                            <th>Tx Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Instantly populated by app.js -->
+                    </tbody>
+                </table>
+                <div id="no-results" class="no-results" style="display: none;">
+                    <i class="fa-solid fa-ban"></i>
+                    <p>No matching allocations found in the records.</p>
+                </div>
+            </div>
+
+            <!-- PAGINATION CONTROL FOOTER -->
+            <div class="pagination-footer">
+                <div class="pagination-info">
+                    Showing <span id="pag-start">0</span> to <span id="pag-end">0</span> of <span id="pag-total">0</span> entries
+                </div>
+                <div class="pagination-buttons" id="pagination-buttons">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="main-footer">
+            <p>Powered by <strong>Blockscout</strong> & <strong>Billions Network</strong>. Compiled securely by <strong>Antigravity AI</strong>.</p>
+            <p class="copyright">&copy; 2026 Billions Reward System. Open Ledger Verified.</p>
+        </footer>
+    </div>
+
+    <!-- Notification Toast for Copy to Clipboard -->
+    <div id="toast" class="toast">Address copied to clipboard!</div>
+
+    <!-- Inject data and app scripts -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
