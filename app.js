@@ -125,6 +125,10 @@ function initAnalytics() {
     // Render Charts
     renderDistributionChart(bracketCounts);
     renderVelocityChart();
+    
+    // Update Tokenomics Allocation doughnut chart and risk narrative dynamically
+    const unclaimedTokens = TOTAL_ALLOCATED_SUPPLY - totalTokens;
+    initTokenomicsChart(totalTokens, unclaimedTokens);
 }
 
 // Render Doughnut distribution chart
@@ -620,6 +624,285 @@ function setupEventListeners() {
             });
         });
     }
+    
+    // 6. Sidebar Tab Toggling & Header Title Updates
+    const navItems = document.querySelectorAll('.nav-item');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    const pageTitle = document.getElementById('page-title');
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    
+    if (navItems) {
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+                
+                item.classList.add('active');
+                const tabId = item.getAttribute('data-tab');
+                const targetPanel = document.getElementById(tabId);
+                if (targetPanel) targetPanel.classList.add('active');
+                
+                // Update header title dynamically
+                if (pageTitle) {
+                    if (tabId === 'tab-dashboard') pageTitle.innerText = 'DASHBOARD & OVERVIEW';
+                    else if (tabId === 'tab-explorer') pageTitle.innerText = 'AIRDROP CLAIMS LEDGER';
+                    else if (tabId === 'tab-whale') pageTitle.innerText = 'WHALE MOVE MONITOR';
+                    else if (tabId === 'tab-tokenomics') pageTitle.innerText = 'TOKENOMICS & RISK';
+                }
+                
+                // Hide sidebar drawer on mobile after selection
+                if (sidebar) sidebar.classList.remove('active');
+            });
+        });
+    }
+    
+    // Mobile menu toggle functionality
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== menuToggle) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+    
+    // 7. Threshold change listener for Whale Moves
+    const whaleThresholdSelect = document.getElementById('whale-threshold');
+    if (whaleThresholdSelect) {
+        whaleThresholdSelect.addEventListener('change', () => {
+            syncLatestTransfers();
+        });
+    }
+}
+
+// ==========================================================================
+// WHALE INTEL, LOCKUP COUNTDOWN, AND DYNAMIC SUPPLY CHARTS (yukki Modules)
+// ==========================================================================
+
+let tokenomicsChartInstance;
+
+/**
+ * Initializes and dynamically updates the Staked vs Unclaimed supply doughnut chart.
+ * @param {number} staked - Sum of claimed tokens currently auto-staked.
+ * @param {number} available - Sum of unclaimed reward pool tokens.
+ */
+function initTokenomicsChart(staked, available) {
+    const ctx = document.getElementById('tokenomicsChart');
+    if (!ctx) return;
+    
+    const context = ctx.getContext('2d');
+    if (tokenomicsChartInstance) {
+        tokenomicsChartInstance.destroy();
+    }
+    
+    tokenomicsChartInstance = new Chart(context, {
+        type: 'doughnut',
+        data: {
+            labels: ['Staked & Locked', 'Available & Unclaimed'],
+            datasets: [{
+                data: [staked, available],
+                backgroundColor: [
+                    '#00f2fe', // Glowing Cyan for staked
+                    '#7f00ff'  // Glowing Purple for unclaimed
+                ],
+                borderColor: '#0b0d19',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: '#8d96b0',
+                        font: { family: 'Outfit', size: 12 }
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+}
+
+/**
+ * Renders the top 10 claimant leaderboard inside the Whale view.
+ */
+function initWhaleRankings() {
+    const tbody = document.getElementById('whale-rankings-body');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    // Sort entire claims database by amount descending and slice top 10
+    const top10 = [...claimsData].sort((a, b) => b.amount - a.amount).slice(0, 10);
+    
+    top10.forEach((c, idx) => {
+        const row = document.createElement('tr');
+        const shortAddr = `${c.address.substring(0, 12)}...${c.address.substring(c.address.length - 12)}`;
+        
+        let rankBadge = `#${idx + 1}`;
+        if (idx === 0) rankBadge = '🥇 #1';
+        else if (idx === 1) rankBadge = '🥈 #2';
+        else if (idx === 2) rankBadge = '🥉 #3';
+        
+        let bracketBadge = '';
+        if (c.amount >= 1000000) {
+            bracketBadge = `<span class="amount-badge badge-whale" style="margin: 0;">Whale</span>`;
+        } else {
+            bracketBadge = `<span class="amount-badge badge-high" style="margin: 0;">High Tier</span>`;
+        }
+        
+        row.innerHTML = `
+            <td style="font-weight: 700; color: ${idx < 3 ? 'var(--color-primary)' : 'var(--text-muted)'}">${rankBadge}</td>
+            <td>
+                <div class="address-cell" data-address="${c.address}">
+                    ${shortAddr} <i class="fa-regular fa-copy copy-icon" style="cursor: pointer; margin-left: 8px;"></i>
+                </div>
+            </td>
+            <td class="amount-col" style="color: var(--color-primary); font-weight: 600;">
+                ${c.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} BILL
+            </td>
+            <td>${bracketBadge}</td>
+        `;
+        
+        // Add copy listener
+        const cell = row.querySelector('.address-cell');
+        cell.addEventListener('click', () => {
+            navigator.clipboard.writeText(c.address).then(() => {
+                showToast("Address copied to clipboard!");
+            });
+        });
+        
+        tbody.appendChild(row);
+    });
+}
+
+/**
+ * Calculates and ticking down a high-precision countdown to the Staking Lockup unlock date (Oct 31, 2026).
+ */
+function startStakingCountdown() {
+    const targetDate = new Date("2026-10-31T23:59:59Z").getTime();
+    
+    function updateCd() {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+        
+        const lockupEl = document.getElementById('lockup-countdown');
+        if (!lockupEl) return;
+        
+        if (diff <= 0) {
+            lockupEl.innerHTML = "<div class='unlocked-msg' style='font-size: 1.5rem; color:#00e676; font-weight:700;'>⚡ REWARDS FULLY UNLOCKED!</div>";
+            return;
+        }
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const dEl = document.getElementById('cd-days');
+        const hEl = document.getElementById('cd-hours');
+        const mEl = document.getElementById('cd-minutes');
+        const sEl = document.getElementById('cd-seconds');
+        
+        if (dEl) dEl.innerText = String(days).padStart(2, '0');
+        if (hEl) hEl.innerText = String(hours).padStart(2, '0');
+        if (mEl) mEl.innerText = String(minutes).padStart(2, '0');
+        if (sEl) sEl.innerText = String(seconds).padStart(2, '0');
+    }
+    
+    updateCd();
+    setInterval(updateCd, 1000);
+}
+
+/**
+ * Queries Blockscout API transfers endpoint in real-time, filtering and displaying large transactions.
+ */
+async function syncLatestTransfers() {
+    const tokenAddress = "0xb060E40C3B053C33D458f7105F95DA52741CAb62";
+    const thresholdSelect = document.getElementById('whale-threshold');
+    const threshold = thresholdSelect ? parseFloat(thresholdSelect.value) : 10000;
+    
+    const url = `https://explorer.billions.network/api/v2/tokens/${tokenAddress}/transfers`;
+    const tbody = document.getElementById('whale-transfers-body');
+    const noResults = document.getElementById('whale-no-results');
+    
+    if (!tbody) return;
+    
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Transfers response not ok");
+        
+        const data = await res.json();
+        const items = data.items || [];
+        
+        tbody.innerHTML = '';
+        let count = 0;
+        
+        items.forEach(item => {
+            const valWei = item.total ? item.total.value : "0";
+            const valTokens = parseFloat(valWei) / 1e18;
+            
+            if (valTokens >= threshold) {
+                count++;
+                const row = document.createElement('tr');
+                
+                const txHash = item.transaction_hash;
+                const shortTx = `${txHash.substring(0, 8)}...${txHash.substring(txHash.length - 8)}`;
+                
+                const method = item.method || "transfer";
+                
+                const fromHash = item.from ? item.from.hash : "0x00";
+                const fromName = item.from && item.from.name ? item.from.name : `${fromHash.substring(0, 6)}...${fromHash.substring(fromHash.length - 4)}`;
+                
+                const toHash = item.to ? item.to.hash : "0x00";
+                const toName = item.to && item.to.name ? item.to.name : `${toHash.substring(0, 6)}...${toHash.substring(toHash.length - 4)}`;
+                
+                let timestamp = item.timestamp || new Date().toISOString();
+                timestamp = timestamp.replace('T', ' ').substring(0, 19);
+                
+                let badgeClass = '';
+                if (valTokens >= 50000) {
+                    badgeClass = '<span class="amount-badge" style="margin-left:8px; background:rgba(255, 0, 127, 0.15); color:#ff007f; border:1px solid #ff007f; border-radius:4px; padding:2px 6px; font-size:0.7rem;">Ultra Whale</span>';
+                } else if (valTokens >= 10000) {
+                    badgeClass = '<span class="amount-badge badge-high" style="margin-left:8px;">Whale</span>';
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <a href="https://explorer.billions.network/tx/${txHash}" target="_blank" class="explorer-link" style="color: var(--color-primary); font-family: var(--font-mono); font-size: 0.85rem; text-decoration: none;">
+                            ${shortTx} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem; margin-left:4px;"></i>
+                        </a>
+                    </td>
+                    <td><span class="method-tag">${method}</span></td>
+                    <td title="${fromHash}" style="font-family: var(--font-mono); font-size: 0.85rem;">${fromName}</td>
+                    <td title="${toHash}" style="font-family: var(--font-mono); font-size: 0.85rem;">${toName}</td>
+                    <td class="amount-col" style="font-weight: 600; color: ${valTokens >= 10000 ? 'var(--color-primary)' : '#fff'}">
+                        ${valTokens.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        ${badgeClass}
+                    </td>
+                    <td style="font-size: 0.85rem; color: var(--text-muted);">${timestamp}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        });
+        
+        if (count === 0) {
+            noResults.style.display = 'block';
+        } else {
+            noResults.style.display = 'none';
+        }
+    } catch (e) {
+        console.error("Error fetching transfers:", e);
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding: 30px 0;">Failed to sync transfers feed. Rate limit exceeded or network down.</td></tr>';
+    }
 }
 
 // ==========================================================================
@@ -743,9 +1026,13 @@ async function syncLatestClaims() {
             // Re-render dashboard panels, graphs, and lists
             initAnalytics();
             updateDataGrid();
+            initWhaleRankings(); // Live updates to Whale Leaderboard
         } else {
             console.log("Sync complete: No new claims detected.");
         }
+        
+        // Refresh Whale transfers feed concurrently
+        syncLatestTransfers();
         
     } catch (e) {
         console.error("Error syncing claims:", e);
@@ -770,6 +1057,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Initiate first ledger rendering
     updateDataGrid();
     
-    // 4. Start Live Sync Countdown
+    // 4. Initialize Staking Lockup countdown
+    startStakingCountdown();
+    
+    // 5. Build Top Claimant Leaderboard
+    initWhaleRankings();
+    
+    // 6. Fetch initial Whale Transfers feed
+    syncLatestTransfers();
+    
+    // 7. Start Live Sync Countdown
     startCountdown();
 });

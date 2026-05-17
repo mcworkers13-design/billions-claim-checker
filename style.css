@@ -986,3 +986,364 @@ tr:nth-child(3) td.rank-col { color: #cd7f32; }  /* Bronze */
 .timeframe-summary span {
     color: #fff;
 }
+
+/* ==========================================================================
+   SIDEBAR NAVIGATION SYSTEM
+   ========================================================================== */
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--color-bg);
+    width: 100%;
+}
+
+.sidebar {
+    width: 280px;
+    background: rgba(11, 13, 25, 0.7);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    padding: 35px 25px;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    transition: var(--transition-smooth);
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.sidebar-brand i {
+    font-size: 1.8rem;
+    color: var(--color-primary);
+}
+
+.sidebar-brand h2 {
+    font-family: var(--font-main);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #fff;
+    margin: 0;
+}
+
+.sidebar-brand h2 span {
+    color: var(--color-primary);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+    transition: var(--transition-smooth);
+    width: 100%;
+}
+
+.nav-item i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+}
+
+.nav-item.active {
+    background: rgba(0, 242, 254, 0.08);
+    border-color: rgba(0, 242, 254, 0.15);
+    color: var(--color-primary);
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.03);
+}
+
+.sidebar-status {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 20px;
+}
+
+.sidebar-status .live-update-badge {
+    align-self: flex-start;
+}
+
+.sidebar-credits {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 40px 40px 60px 40px;
+    max-width: calc(100vw - 280px);
+    transition: var(--transition-smooth);
+}
+
+/* Tab Panels */
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile responsive navigation */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(11, 13, 25, 0.85);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 99;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-header .brand {
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mobile-header .brand i {
+    color: var(--color-primary);
+}
+
+.menu-toggle {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   WHALE FEED & TOKENOMICS STYLES
+   ========================================================================== */
+
+.whale-filter-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.whale-select {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    outline: none;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.whale-select:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.method-tag {
+    background: rgba(0, 242, 254, 0.1);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    color: var(--color-primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+}
+
+/* Tokenomics & Countdown Cards */
+.lockup-card {
+    background: linear-gradient(135deg, rgba(127, 0, 255, 0.05) 0%, rgba(0, 242, 254, 0.02) 100%);
+    border: 1px solid rgba(127, 0, 255, 0.15) !important;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.countdown-display {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.cd-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    width: 90px;
+    padding: 15px 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: var(--transition-smooth);
+}
+
+.cd-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 242, 254, 0.2);
+}
+
+.cd-item span {
+    font-family: var(--font-mono);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.cd-item p {
+    font-family: var(--font-main);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.lockup-deadline-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.lockup-deadline-info i {
+    color: var(--color-secondary);
+}
+
+.tokenomics-details-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr;
+    gap: 30px;
+}
+
+.risk-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.risk-indicator-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.risk-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.risk-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.rating-safe {
+    color: #00e676;
+    text-shadow: 0 0 5px rgba(0, 230, 118, 0.2);
+}
+
+.risk-assessment-narrative {
+    margin-top: 20px;
+    padding: 15px 20px;
+    background: rgba(0, 230, 118, 0.03);
+    border-left: 3px solid #00e676;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    border-radius: 0 8px 8px 0;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN ADAPTATIONS
+   ========================================================================== */
+
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        max-width: 100%;
+        padding: 95px 20px 60px 20px;
+    }
+    
+    .mobile-header {
+        display: flex;
+    }
+    
+    .tokenomics-details-layout {
+        grid-template-columns: 1fr;
+    }
+}
+

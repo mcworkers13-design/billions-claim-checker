@@ -21,200 +21,382 @@
         <div class="orb orb-tertiary"></div>
     </div>
 
-    <div class="dashboard-wrapper">
-        <!-- HEADER -->
-        <header class="main-header">
-            <div class="brand">
-                <div class="brand-logo">
-                    <i class="fa-solid fa-circle-nodes logo-spin"></i>
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="brand">
+            <i class="fa-solid fa-circle-nodes logo-spin"></i>
+            <span>BILLIONS</span>
+        </div>
+        <button id="menu-toggle" class="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- MAIN APP LAYOUT -->
+    <div class="app-layout">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-circle-nodes logo-spin"></i>
+                <h2>BILLIONS <span>NETWORK</span></h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="tab-dashboard">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </button>
+                <button class="nav-item" data-tab="tab-explorer">
+                    <i class="fa-solid fa-list-check"></i> Airdrop Explorer
+                </button>
+                <button class="nav-item" data-tab="tab-whale">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Whale Moves
+                </button>
+                <button class="nav-item" data-tab="tab-tokenomics">
+                    <i class="fa-solid fa-coins"></i> Tokenomics & Risk
+                </button>
+            </nav>
+            
+            <div class="sidebar-status">
+                <div class="live-update-badge">
+                    <span class="pulse-indicator"></span>
+                    <span id="countdown-timer">Syncing...</span>
                 </div>
-                <div class="brand-text">
-                    <h1>BILLIONS <span>NETWORK</span></h1>
-                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                        <p class="subtitle">ALLOCATION EXPLORER & ANALYTICS</p>
-                        <div class="live-update-badge" title="Auto-updating claims history live from Blockscout every 60 seconds">
-                            <span class="pulse-indicator"></span>
-                            <span id="countdown-timer">Syncing...</span>
+                <div class="sidebar-credits">
+                    Developed by <strong>yukki</strong>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT VIEW WINDOW -->
+        <main class="main-content">
+            
+            <!-- HEADER CONTRACT BADGES PINS -->
+            <header class="main-header" style="margin-bottom: 30px;">
+                <div class="header-title">
+                    <h1 id="page-title">DASHBOARD & OVERVIEW</h1>
+                    <p class="subtitle" style="margin-top: 4px; font-size: 0.8rem; letter-spacing: 1px; color: var(--text-muted);">ALL-IN-ONE TOKEN INTEL CENTER</p>
+                </div>
+                <div class="contract-badges">
+                    <a href="https://explorer.billions.network/token/0xb060E40C3B053C33D458f7105F95DA52741CAb62" target="_blank" class="badge">
+                        <span class="badge-label">Token $BILL</span>
+                        <span class="badge-value">0xb060...Ab62 <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                    </a>
+                    <a href="https://explorer.billions.network/address/0x4BB63E4E1AcC5750FD1a6aDF26520126D8c9d6C8" target="_blank" class="badge badge-accent">
+                        <span class="badge-label">Distributor</span>
+                        <span class="badge-value">0x4BB6...d6C8 <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- TAB PANEL 1: DASHBOARD -->
+            <div class="tab-panel active" id="tab-dashboard">
+                <!-- STATS PANEL GRID -->
+                <section class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="stat-info">
+                            <h3>Total Claimants</h3>
+                            <p id="stat-total-wallets" class="stat-value">0</p>
+                            <p class="stat-sub">100% Unique Addresses</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+                        <div class="stat-info">
+                            <h3>Total $BILL Claimed</h3>
+                            <p id="stat-total-tokens" class="stat-value">0 BILL</p>
+                            <p class="stat-sub">100% Auto-Staked</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+                        <div class="stat-info">
+                            <h3>Allocated Supply</h3>
+                            <p id="stat-allocated-supply" class="stat-value">100,923,053.37 BILL</p>
+                            <p class="stat-sub">Total TGE Reward Pool</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                        <div class="stat-info" style="flex-grow: 1; min-width: 0;">
+                            <h3>Claim Pool Progress</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 2px;">
+                                <span id="stat-progress-pct" class="stat-value" style="font-size: 1.25rem;">0.00%</span>
+                                <span class="stat-sub" style="font-size: 0.65rem;">Of Supply Claimed</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div id="stat-progress-bar" class="progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-crown"></i></div>
+                        <div class="stat-info">
+                            <h3>Max Whale Claim</h3>
+                            <p id="stat-max-claim" class="stat-value">0 BILL</p>
+                            <p class="stat-sub" id="stat-max-holder">0xbc8b...fB5b</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CHARTS SECTION -->
+                <section class="charts-section">
+                    <div class="panel-card chart-panel">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-chart-pie"></i> ALLOCATION DISTRIBUTION BRACKETS</h2>
+                            <p class="panel-sub">Division of claimed supply between retail participants and whale tiers</p>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel-card chart-panel">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-timeline"></i> DAILY CLAIM VELOCITY</h2>
+                            <p class="panel-sub">Velocity trends showing Token Generation Event (TGE) surge and daily stabilization</p>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="velocityChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TAB PANEL 2: EXPLORER -->
+            <div class="tab-panel" id="tab-explorer">
+                <!-- MAIN TABLE EXPLORER CARD -->
+                <section class="panel-card explorer-panel">
+                    <div class="explorer-header-actions">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-list-check"></i> CLAIMS EXPLORER LEDGER</h2>
+                            <p class="panel-sub">Real-time searchable database of all 9,344 historical claim allocations</p>
+                        </div>
+                    </div>
+
+                    <!-- TIMEFRAME CHECKER BAR -->
+                    <div class="timeframe-checker-bar">
+                        <div class="timeframe-label">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>Timeframe Checker:</span>
+                        </div>
+                        <div class="timeframe-buttons" id="timeframe-selector">
+                            <button class="tf-btn active" data-tf="all">All Time</button>
+                            <button class="tf-btn" data-tf="30d">Last 30 Days</button>
+                            <button class="tf-btn" data-tf="7d">Last 7 Days</button>
+                            <button class="tf-btn" data-tf="24h">Last 24 Hours</button>
+                            <button class="tf-btn" data-tf="1h">Last 1 Hour</button>
+                            <button class="tf-btn" data-tf="5m">Last 5 Mins</button>
+                            <button class="tf-btn" data-tf="1m">Last 1 Min</button>
+                        </div>
+                        <div class="timeframe-summary">
+                            Filtered: <span id="tf-count">0</span> claims | <span id="tf-amount">0.00</span> BILL
+                        </div>
+                    </div>
+
+                    <!-- SEARCH AND FILTER CONTROLS -->
+                    <div class="search-filter-wrapper">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="search-input" placeholder="Search by claimant address or exact amount...">
+                            <button id="clear-search-btn" class="clear-search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        
+                        <div class="filter-controls">
+                            <select id="bracket-filter" class="filter-select">
+                                <option value="all">All Tiers / Brackets</option>
+                                <option value="whale">Whales (>= 1M BILL)</option>
+                                <option value="high">High Tier (100k - 999k BILL)</option>
+                                <option value="medium">Medium Tier (10k - 99k BILL)</option>
+                                <option value="supporter">Supporters (1k - 9.9k BILL)</option>
+                                <option value="retail">Retail (500 - 999 BILL)</option>
+                                <option value="test">Testing (< 100 BILL)</option>
+                            </select>
+
+                            <select id="page-size-selector" class="filter-select select-short">
+                                <option value="10">10 entries</option>
+                                <option value="25" selected>25 entries</option>
+                                <option value="50">50 entries</option>
+                                <option value="100">100 entries</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- TABLE -->
+                    <div class="table-container">
+                        <table id="claims-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="rank">Rank <i class="fa-solid fa-sort"></i></th>
+                                    <th class="sortable" data-sort="address">Claimant Wallet Address <i class="fa-solid fa-sort"></i></th>
+                                    <th class="sortable active-sort" data-sort="amount">Allocated Amount ($BILL) <i class="fa-solid fa-sort-down"></i></th>
+                                    <th class="sortable" data-sort="timestamp">Claim Date & Time (UTC) <i class="fa-solid fa-sort"></i></th>
+                                    <th>Tx Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- Instantly populated by app.js -->
+                            </tbody>
+                        </table>
+                        <div id="no-results" class="no-results" style="display: none;">
+                            <i class="fa-solid fa-ban"></i>
+                            <p>No matching allocations found in the records.</p>
+                        </div>
+                    </div>
+
+                    <!-- PAGINATION CONTROL FOOTER -->
+                    <div class="pagination-footer">
+                        <div class="pagination-info">
+                            Showing <span id="pag-start">0</span> to <span id="pag-end">0</span> of <span id="pag-total">0</span> entries
+                        </div>
+                        <div class="pagination-buttons" id="pagination-buttons">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TAB PANEL 3: WHALE MOVES -->
+            <div class="tab-panel" id="tab-whale">
+                <!-- LIVE WHALE MOVES MONITOR -->
+                <div class="panel-card whale-panel">
+                    <div class="panel-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
+                            <div>
+                                <h2><i class="fa-solid fa-magnifying-glass-chart"></i> LIVE WHALE MOVE MONITOR</h2>
+                                <p class="panel-sub">Real-time tracker of large $BILL transfers on the blockchain</p>
+                            </div>
+                            <div class="whale-filter-box">
+                                <label for="whale-threshold">Transfer Threshold:</label>
+                                <select id="whale-threshold" class="whale-select">
+                                    <option value="1000">> 1,000 $BILL</option>
+                                    <option value="5000">> 5,000 $BILL</option>
+                                    <option value="10000" selected>> 10,000 $BILL (Whale Only)</option>
+                                    <option value="50000">> 50,000 $BILL</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="whale-transfers-table">
+                            <thead>
+                                <tr>
+                                    <th>Tx Hash</th>
+                                    <th>Method</th>
+                                    <th>Sender</th>
+                                    <th>Recipient</th>
+                                    <th>Amount ($BILL)</th>
+                                    <th>Time (UTC)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="whale-transfers-body">
+                                <!-- Populated dynamically from API -->
+                            </tbody>
+                        </table>
+                        <div id="whale-no-results" class="no-results" style="display: none;">
+                            <i class="fa-solid fa-ban"></i>
+                            <p>No large transfers detected in the current window.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ALLOCATION LEADERBOARD -->
+                <div class="panel-card rankings-panel" style="margin-top: 30px;">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-crown"></i> TOP 10 ALLOCATION LEADERBOARD</h2>
+                        <p class="panel-sub">Rankings of the largest eligible recipients by claimed size</p>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Claimant Wallet</th>
+                                    <th>Claimed Amount</th>
+                                    <th>Allocation Class</th>
+                                </tr>
+                            </thead>
+                            <tbody id="whale-rankings-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB PANEL 4: TOKENOMICS & RISK -->
+            <div class="tab-panel" id="tab-tokenomics">
+                <!-- COMPULSORY LOCKUP COUNTDOWN -->
+                <div class="panel-card lockup-card">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-hourglass-half"></i> COMPULSORY STAKING LOCKUP EXPIRY</h2>
+                        <p class="panel-sub">Countdown until auto-staked TGE rewards unlock and become tradeable</p>
+                    </div>
+                    <div class="countdown-display" id="lockup-countdown">
+                        <div class="cd-item"><span id="cd-days">00</span><p>Days</p></div>
+                        <div class="cd-item"><span id="cd-hours">00</span><p>Hours</p></div>
+                        <div class="cd-item"><span id="cd-minutes">00</span><p>Minutes</p></div>
+                        <div class="cd-item"><span id="cd-seconds">00</span><p>Seconds</p></div>
+                    </div>
+                    <div class="lockup-deadline-info">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        Staked rewards are locked on-chain until <strong>October 31, 2026 at 23:59:59 UTC</strong>. Unstaking prior to this date is physically impossible.
+                    </div>
+                </div>
+
+                <div class="tokenomics-details-layout">
+                    <!-- ALLOCATION CHART -->
+                    <div class="panel-card chart-panel">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-chart-pie"></i> $BILL SUPPLY ALLOCATION</h2>
+                            <p class="panel-sub">Ratio of claimed/staked pool against unclaimed available reserves</p>
+                        </div>
+                        <div class="chart-container" style="position:relative; height:240px; margin-top:20px;">
+                            <canvas id="tokenomicsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- DUMP RISK ASSESSMENT -->
+                    <div class="panel-card risk-panel">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-triangle-exclamation"></i> DUMP RISK ASSESSMENT</h2>
+                            <p class="panel-sub">Systemic risk metrics regarding token dump pressure and liquidity</p>
+                        </div>
+                        <div class="risk-metrics" style="margin-top:20px;">
+                            <div class="risk-indicator-box">
+                                <span class="risk-label">Current Sell Pressure:</span>
+                                <span class="risk-value rating-safe">NONE (0% Volatility)</span>
+                            </div>
+                            <div class="risk-indicator-box">
+                                <span class="risk-label">Circulating supply:</span>
+                                <span class="risk-value">0.00 BILL (0.00%)</span>
+                            </div>
+                            <div class="risk-indicator-box">
+                                <span class="risk-label">Locked Staking supply:</span>
+                                <span class="risk-value" style="color:var(--color-primary);">80,410,036.30 BILL (79.67%)</span>
+                            </div>
+                            <div class="risk-indicator-box">
+                                <span class="risk-label">Distributor (Unclaimed) supply:</span>
+                                <span class="risk-value" style="color:var(--color-secondary);">20,513,017.07 BILL (20.33%)</span>
+                            </div>
+                            <div class="risk-indicator-box">
+                                <span class="risk-label">Staked Lockup Protection:</span>
+                                <span class="risk-value rating-safe">ACTIVE (100% Locked)</span>
+                            </div>
+                        </div>
+                        <div class="risk-assessment-narrative">
+                            <strong>Risk Assessment Narrative:</strong> The $BILL token has **extremely low sell pressure** due to a comprehensive mandatory staking program for TGE claimants. All claimed rewards are programmatically locked until October 31, 2026. Therefore, no airdrop recipient can liquidate or dump tokens on the open market, making the token short-term immune to supply dumps from claimants.
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="contract-badges">
-                <a href="https://explorer.billions.network/token/0xb060E40C3B053C33D458f7105F95DA52741CAb62" target="_blank" class="badge">
-                    <span class="badge-label">Token $BILL</span>
-                    <span class="badge-value">0xb060...Ab62 <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
-                </a>
-                <a href="https://explorer.billions.network/address/0x4BB63E4E1AcC5750FD1a6aDF26520126D8c9d6C8" target="_blank" class="badge badge-accent">
-                    <span class="badge-label">Distributor</span>
-                    <span class="badge-value">0x4BB6...d6C8 <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
-                </a>
-            </div>
-        </header>
 
-        <!-- STATS PANEL GRID -->
-        <section class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
-                <div class="stat-info">
-                    <h3>Total Claimants</h3>
-                    <p id="stat-total-wallets" class="stat-value">0</p>
-                    <p class="stat-sub">100% Unique Addresses</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
-                <div class="stat-info">
-                    <h3>Total $BILL Claimed</h3>
-                    <p id="stat-total-tokens" class="stat-value">0 BILL</p>
-                    <p class="stat-sub">100% Auto-Staked</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
-                <div class="stat-info">
-                    <h3>Allocated Supply</h3>
-                    <p id="stat-allocated-supply" class="stat-value">100,923,053.37 BILL</p>
-                    <p class="stat-sub">Total TGE Reward Pool</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div>
-                <div class="stat-info" style="flex-grow: 1; min-width: 0;">
-                    <h3>Claim Pool Progress</h3>
-                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 2px;">
-                        <span id="stat-progress-pct" class="stat-value" style="font-size: 1.25rem;">0.00%</span>
-                        <span class="stat-sub" style="font-size: 0.65rem;">Of Supply Claimed</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div id="stat-progress-bar" class="progress-bar"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-crown"></i></div>
-                <div class="stat-info">
-                    <h3>Max Whale Claim</h3>
-                    <p id="stat-max-claim" class="stat-value">0 BILL</p>
-                    <p class="stat-sub" id="stat-max-holder">0xbc8b...fB5b</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- CHARTS SECTION -->
-        <section class="charts-section">
-            <div class="panel-card chart-panel">
-                <div class="panel-header">
-                    <h2><i class="fa-solid fa-chart-pie"></i> ALLOCATION DISTRIBUTION BRACKETS</h2>
-                    <p class="panel-sub">Division of claimed supply between retail participants and whale tiers</p>
-                </div>
-                <div class="chart-container">
-                    <canvas id="distributionChart"></canvas>
-                </div>
-            </div>
-            <div class="panel-card chart-panel">
-                <div class="panel-header">
-                    <h2><i class="fa-solid fa-timeline"></i> DAILY CLAIM VELOCITY</h2>
-                    <p class="panel-sub">Velocity trends showing Token Generation Event (TGE) surge and daily stabilization</p>
-                </div>
-                <div class="chart-container">
-                    <canvas id="velocityChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <!-- MAIN TABLE EXPLORER CARD -->
-        <main class="panel-card explorer-panel">
-            <div class="explorer-header-actions">
-                <div class="panel-header">
-                    <h2><i class="fa-solid fa-list-check"></i> CLAIMS EXPLORER LEDGER</h2>
-                    <p class="panel-sub">Real-time searchable database of all 9,344 historical claim allocations</p>
-                </div>
-                
-                <!-- 🕒 TIMEFRAME CHECKER BAR -->
-                <div class="timeframe-checker-bar">
-                    <div class="timeframe-label">
-                        <i class="fa-solid fa-clock-rotate-left"></i> Timeframe Checker:
-                    </div>
-                    <div class="timeframe-buttons" id="timeframe-selector">
-                        <button class="tf-btn active" data-tf="all">All Time</button>
-                        <button class="tf-btn" data-tf="30d">Last 30 Days</button>
-                        <button class="tf-btn" data-tf="7d">Last 7 Days</button>
-                        <button class="tf-btn" data-tf="24h">Last 24 Hours</button>
-                        <button class="tf-btn" data-tf="1h">Last 1 Hour</button>
-                        <button class="tf-btn" data-tf="5m">Last 5 Mins</button>
-                        <button class="tf-btn" data-tf="1m">Last 1 Min</button>
-                    </div>
-                    <div class="timeframe-summary">
-                        Filtered: <span id="tf-count">0</span> claims | <span id="tf-amount">0.00</span> BILL
-                    </div>
-                </div>
-
-                <div class="search-filter-wrapper">
-                    <!-- Search Input -->
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="search-input" placeholder="Search by claimant address or exact amount..." autocomplete="off">
-                        <button id="clear-search-btn" class="clear-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <!-- Quick Filters -->
-                    <div class="filter-controls">
-                        <select id="bracket-filter">
-                            <option value="all">All Tiers / Brackets</option>
-                            <option value="whale">Whales (>= 1,000,000 BILL)</option>
-                            <option value="high">High Tier (100,000 - 999,999 BILL)</option>
-                            <option value="medium">Medium Tier (10,000 - 99,999 BILL)</option>
-                            <option value="supporter">Early Supporter (1,000 - 9,999 BILL)</option>
-                            <option value="retail">Standard Retail (500 - 999 BILL)</option>
-                            <option value="test">Testing (< 100 BILL)</option>
-                        </select>
-                        <select id="page-size-selector">
-                            <option value="10">10 entries</option>
-                            <option value="25" selected>25 entries</option>
-                            <option value="50">50 entries</option>
-                            <option value="100">100 entries</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TABLE -->
-            <div class="table-container">
-                <table id="claims-table">
-                    <thead>
-                        <tr>
-                            <th class="sortable" data-sort="rank">Rank <i class="fa-solid fa-sort"></i></th>
-                            <th class="sortable" data-sort="address">Claimant Wallet Address <i class="fa-solid fa-sort"></i></th>
-                            <th class="sortable active-sort" data-sort="amount">Allocated Amount ($BILL) <i class="fa-solid fa-sort-down"></i></th>
-                            <th class="sortable" data-sort="timestamp">Claim Date & Time (UTC) <i class="fa-solid fa-sort"></i></th>
-                            <th>Tx Details</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <!-- Instantly populated by app.js -->
-                    </tbody>
-                </table>
-                <div id="no-results" class="no-results" style="display: none;">
-                    <i class="fa-solid fa-ban"></i>
-                    <p>No matching allocations found in the records.</p>
-                </div>
-            </div>
-
-            <!-- PAGINATION CONTROL FOOTER -->
-            <div class="pagination-footer">
-                <div class="pagination-info">
-                    Showing <span id="pag-start">0</span> to <span id="pag-end">0</span> of <span id="pag-total">0</span> entries
-                </div>
-                <div class="pagination-buttons" id="pagination-buttons">
-                    <!-- Loaded dynamically -->
-                </div>
-            </div>
+            <!-- FOOTER -->
+            <footer class="main-footer">
+                <p>Powered by <strong>Blockscout</strong> & <strong>Billions Network</strong>. Developed by <strong>yukki</strong>.</p>
+                <p class="copyright">&copy; 2026 Billions Reward System. Open Ledger Verified.</p>
+            </footer>
         </main>
-
-        <!-- FOOTER -->
-        <footer class="main-footer">
-            <p>Powered by <strong>Blockscout</strong> & <strong>Billions Network</strong>. Developed by <strong>yukki</strong>.</p>
-            <p class="copyright">&copy; 2026 Billions Reward System. Open Ledger Verified.</p>
-        </footer>
     </div>
 
     <!-- Notification Toast for Copy to Clipboard -->
