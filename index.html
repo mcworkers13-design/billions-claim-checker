@@ -194,13 +194,13 @@
                             </div>
                         </div>
 
-                        <!-- NATIVE BILLIONS CHAIN -->
+                        <!-- NATIVE L1 CHAIN -->
                         <div class="chain-hub-card native-card-glow">
                             <div class="chain-header">
                                 <div class="chain-meta">
                                     <i class="fa-solid fa-circle-nodes chain-logo native-color"></i>
                                     <div>
-                                        <h4>Billions L1 Network</h4>
+                                        <h4>L1 Network</h4>
                                         <p class="chain-tag">Native ERC-20 Ledger</p>
                                     </div>
                                 </div>
@@ -223,21 +223,7 @@
                 </section>
 
                 <!-- DYNAMIC GRAPH & GLOBAL HOLDERS LEADERBOARD -->
-                <div class="token-holders-layout">
-                    <!-- Left Column: Claim Brackets -->
-                    <div class="panel-card chart-panel" style="padding: 24px;">
-                        <div class="panel-header">
-                            <h2><i class="fa-solid fa-chart-pie"></i> ALLOCATION BRACKET RATIOS</h2>
-                            <p class="panel-sub">Division of claimed supply between retail participants and whale tiers</p>
-                        </div>
-                        <div class="chart-container" style="position:relative; height:240px; margin-top:20px;">
-                            <canvas id="distributionChart"></canvas>
-                        </div>
-                        <div id="bracket-details-grid" class="bracket-details-grid" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
-                            <!-- Populated dynamically via app.js -->
-                        </div>
-                    </div>
-
+                <div class="token-holders-layout" style="grid-template-columns: 1fr;">
                     <!-- Right Column: Top 5 Global On-Chain Holders -->
                     <div class="panel-card holders-panel" style="padding: 24px;">
                         <div class="panel-header">
@@ -312,6 +298,23 @@
                     </div>
                 </div>
 
+                <!-- ALLOCATION BRACKET RATIOS -->
+                <div class="token-holders-layout" style="grid-template-columns: 1fr; margin-bottom: 30px;">
+                    <!-- Claim Brackets -->
+                    <div class="panel-card chart-panel" style="padding: 24px;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-chart-pie"></i> ALLOCATION BRACKET RATIOS</h2>
+                            <p class="panel-sub">Division of claimed supply between retail participants and whale tiers</p>
+                        </div>
+                        <div class="chart-container" style="position:relative; height:240px; margin-top:20px;">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                        <div id="bracket-details-grid" class="bracket-details-grid" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+                            <!-- Populated dynamically via app.js -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- MAIN TABLE EXPLORER CARD -->
                 <section class="panel-card explorer-panel">
                     <div class="explorer-header-actions">
@@ -365,13 +368,14 @@
                             </select>
 
                             <select id="bracket-filter" class="filter-select">
-                                <option value="all">All Tiers / Brackets</option>
-                                <option value="whale">Whales (>= 1M BILL)</option>
-                                <option value="high">High Tier (100k - 999k BILL)</option>
-                                <option value="medium">Medium Tier (10k - 99k BILL)</option>
-                                <option value="supporter">Supporters (1k - 9.9k BILL)</option>
-                                <option value="retail">Retail (500 - 999 BILL)</option>
-                                <option value="test">Testing (< 100 BILL)</option>
+                                <option value="all">All Allocation Brackets</option>
+                                <option value="whale">≥ 1M BILL TOKENS</option>
+                                <option value="high">100k - 999k BILL TOKENS</option>
+                                <option value="medium">10k - 99k BILL TOKENS</option>
+                                <option value="supporter">1k - 9.9k BILL TOKENS</option>
+                                <option value="retail">500 - 999 BILL TOKENS</option>
+                                <option value="test">&lt; 100 BILL TOKENS</option>
+                                <option value="none">No Allocation</option>
                             </select>
 
                             <select id="page-size-selector" class="filter-select select-short">
@@ -463,6 +467,67 @@
                     </div>
                 </div>
 
+                <!-- CROSS-CHAIN BRIDGE FLOW MONITOR -->
+                <div class="panel-card bridge-panel" style="margin-top: 30px;">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-bridge-water"></i> CROSS-CHAIN BRIDGE FLOW MONITOR</h2>
+                        <p class="panel-sub">Real-time tracking of large $BILL transfers across L1, Ethereum, BNB Chain, and Mantle (updates every 1 min)</p>
+                    </div>
+                    
+                    <!-- Bridge Stats Grid -->
+                    <div class="bridge-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                        <div class="modal-stat-box" style="text-align: left; padding: 12px 16px;">
+                            <span class="m-label" style="font-size: 0.65rem; color: var(--text-muted);"><i class="fa-brands fa-ethereum" style="color: #627eea;"></i> Ethereum Bridge Pool</span>
+                            <span id="bridge-eth-pool" class="m-value" style="font-size: 1.25rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                                542,010,000.00 <span class="status-pulse" style="width: 8px; height: 8px; background: #00e676; border-radius: 50%;"></span>
+                            </span>
+                        </div>
+                        <div class="modal-stat-box" style="text-align: left; padding: 12px 16px;">
+                            <span class="m-label" style="font-size: 0.65rem; color: var(--text-muted);"><i class="fa-solid fa-cubes" style="color: #f3ba2f;"></i> BNB Chain Bridge Pool</span>
+                            <span id="bridge-bnb-pool" class="m-value" style="font-size: 1.25rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                                415,000,000.00 <span class="status-pulse" style="width: 8px; height: 8px; background: #00e676; border-radius: 50%;"></span>
+                            </span>
+                        </div>
+                        <div class="modal-stat-box" style="text-align: left; padding: 12px 16px;">
+                            <span class="m-label" style="font-size: 0.65rem; color: var(--text-muted);"><i class="fa-solid fa-layer-group" style="color: #65b3ff;"></i> Mantle Bridge Pool</span>
+                            <span id="bridge-mantle-pool" class="m-value" style="font-size: 1.25rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                                250,000,000.00 <span class="status-pulse" style="width: 8px; height: 8px; background: #00e676; border-radius: 50%;"></span>
+                            </span>
+                        </div>
+                        <div class="modal-stat-box" style="text-align: left; padding: 12px 16px;">
+                            <span class="m-label" style="font-size: 0.65rem; color: var(--text-muted);"><i class="fa-solid fa-chart-line" style="color: var(--color-primary);"></i> 24H Bridge Volume</span>
+                            <span id="bridge-24h-vol" class="m-value" style="font-size: 1.25rem; color: var(--color-primary);">1,450,220.00 BILL</span>
+                        </div>
+                        <div class="modal-stat-box" style="text-align: left; padding: 12px 16px;">
+                            <span class="m-label" style="font-size: 0.65rem; color: var(--text-muted);"><i class="fa-solid fa-percent" style="color: #00f2fe;"></i> Total Bridged Ratio</span>
+                            <span id="bridge-ratio" class="m-value" style="font-size: 1.25rem; color: #00f2fe;">12.07%</span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="bridge-transfers-table">
+                            <thead>
+                                <tr>
+                                    <th>Tx Hash</th>
+                                    <th>Cross-Chain Route</th>
+                                    <th>Sender</th>
+                                    <th>Recipient</th>
+                                    <th>Amount ($BILL)</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bridge-transfers-body">
+                                <!-- Populated dynamically every 1 min -->
+                            </tbody>
+                        </table>
+                        <div id="bridge-no-results" class="no-results" style="display: none;">
+                            <i class="fa-solid fa-ban"></i>
+                            <p>No recent bridge transactions detected.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ALLOCATION LEADERBOARD -->
                 <div class="panel-card rankings-panel" style="margin-top: 30px;">
                     <div class="panel-header">
@@ -532,15 +597,15 @@
                             </div>
                             <div class="risk-indicator-box">
                                 <span class="risk-label">Circulating supply:</span>
-                                <span class="risk-value">0.00 BILL (0.00%)</span>
+                                <span id="risk-circulating-val" class="risk-value">0.00 BILL (0.00%)</span>
                             </div>
                             <div class="risk-indicator-box">
                                 <span class="risk-label">Locked Staking supply:</span>
-                                <span class="risk-value" style="color:var(--color-primary);">80,410,036.30 BILL (79.67%)</span>
+                                <span id="risk-staked-val" class="risk-value" style="color:var(--color-primary);">80,410,036.30 BILL (79.67%)</span>
                             </div>
                             <div class="risk-indicator-box">
                                 <span class="risk-label">Distributor (Unclaimed) supply:</span>
-                                <span class="risk-value" style="color:var(--color-secondary);">20,513,017.07 BILL (20.33%)</span>
+                                <span id="risk-unclaimed-val" class="risk-value" style="color:var(--color-secondary);">20,513,017.07 BILL (20.33%)</span>
                             </div>
                             <div class="risk-indicator-box">
                                 <span class="risk-label">Staked Lockup Protection:</span>
@@ -620,7 +685,7 @@
     <div id="toast" class="toast">Address copied to clipboard!</div>
 
     <!-- Inject data and app scripts -->
-    <script src="data.js"></script>
-    <script src="app_v2.js"></script>
+    <script src="data.js?v=1.0.4"></script>
+    <script src="app_v2.js?v=1.0.4"></script>
 </body>
 </html>
