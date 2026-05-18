@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <!-- Background glowing orbs for cyberpunk ambient aesthetic -->
@@ -24,7 +24,7 @@
     <!-- Mobile Header -->
     <div class="mobile-header">
         <div class="brand">
-            <i class="fa-solid fa-circle-nodes logo-spin"></i>
+            <img src="images.png" alt="Billions Logo" class="mobile-brand-logo">
             <span>BILLIONS</span>
         </div>
         <button id="menu-toggle" class="menu-toggle">
@@ -38,7 +38,7 @@
         <!-- SIDEBAR NAVIGATION -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <i class="fa-solid fa-circle-nodes logo-spin"></i>
+                <img src="images.png" alt="Billions Logo" class="sidebar-brand-logo">
                 <h2>BILLIONS <span>NETWORK</span></h2>
             </div>
             
@@ -94,77 +94,224 @@
                 <!-- STATS PANEL GRID -->
                 <section class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="stat-icon"><i class="fa-solid fa-coins" style="color: #00e676;"></i></div>
                         <div class="stat-info">
-                            <h3>Total Claimants</h3>
-                            <p id="stat-total-wallets" class="stat-value">0</p>
-                            <p class="stat-sub">100% Unique Addresses</p>
+                            <h3>Live $BILL Price</h3>
+                            <p id="token-price-usd" class="stat-value price-pulse" style="color: #00e676;">$0.1616</p>
+                            <span id="price-change-pct" class="change-tag up"><i class="fa-solid fa-caret-up"></i> +12.42%</span>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+                        <div class="stat-icon"><i class="fa-solid fa-chart-line" style="color: var(--color-primary);"></i></div>
                         <div class="stat-info">
-                            <h3>Total $BILL Claimed</h3>
-                            <p id="stat-total-tokens" class="stat-value">0 BILL</p>
-                            <p class="stat-sub">100% Auto-Staked</p>
+                            <h3>Circulating Market Cap</h3>
+                            <p id="token-market-cap" class="stat-value">Loading...</p>
+                            <span class="change-tag up">Active Claims Pool</span>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+                        <div class="stat-icon"><i class="fa-solid fa-vault"></i></div>
                         <div class="stat-info">
-                            <h3>Allocated Supply</h3>
-                            <p id="stat-allocated-supply" class="stat-value">100,923,053.37 BILL</p>
-                            <p class="stat-sub">Total TGE Reward Pool</p>
+                            <h3>Fully Diluted Cap (FDV)</h3>
+                            <p id="token-fdv" class="stat-value">Loading...</p>
+                            <span class="change-tag neutral">Max Pool Value</span>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div>
-                        <div class="stat-info" style="flex-grow: 1; min-width: 0;">
-                            <h3>Claim Pool Progress</h3>
-                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 2px;">
-                                <span id="stat-progress-pct" class="stat-value" style="font-size: 1.25rem;">0.00%</span>
-                                <span class="stat-sub" style="font-size: 0.65rem;">Of Supply Claimed</span>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div id="stat-progress-bar" class="progress-bar"></div>
-                            </div>
+                        <div class="stat-icon"><i class="fa-solid fa-chart-bar" style="color: #ff007f;"></i></div>
+                        <div class="stat-info">
+                            <h3>24h Trading Volume</h3>
+                            <p class="stat-value" style="color: #ff007f;">$689,850,000</p>
+                            <span class="change-tag down" style="background:rgba(255, 0, 127, 0.1); color:#ff007f;">High Speculation</span>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fa-solid fa-crown"></i></div>
+                        <div class="stat-icon"><i class="fa-solid fa-circle-nodes"></i></div>
                         <div class="stat-info">
-                            <h3>Max Whale Claim</h3>
-                            <p id="stat-max-claim" class="stat-value">0 BILL</p>
-                            <p class="stat-sub" id="stat-max-holder">0xbc8b...fB5b</p>
+                            <h3>Total Combined Holders</h3>
+                            <p class="stat-value">14,242</p>
+                            <span class="change-tag up" style="color:var(--color-primary); background:rgba(0,242,254,0.1);">Multi-Chain Base</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- CHARTS SECTION -->
-                <section class="charts-section">
-                    <div class="panel-card chart-panel">
-                        <div class="panel-header">
-                            <h2><i class="fa-solid fa-chart-pie"></i> ALLOCATION DISTRIBUTION BRACKETS</h2>
-                            <p class="panel-sub">Division of claimed supply between retail participants and whale tiers</p>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="distributionChart"></canvas>
-                        </div>
+                <!-- MULTI-CHAIN CROSS-DEPLOYMENT HUB -->
+                <section class="panel-card multi-chain-panel" style="margin-top: 30px;">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-network-wired"></i> MULTI-CHAIN CROSS-DEPLOYMENT HUB</h2>
+                        <p class="panel-sub">Official smart contracts and active trading networks for the $BILL token</p>
                     </div>
-                    <div class="panel-card chart-panel">
-                        <div class="panel-header">
-                            <h2><i class="fa-solid fa-timeline"></i> DAILY CLAIM VELOCITY</h2>
-                            <p class="panel-sub">Velocity trends showing Token Generation Event (TGE) surge and daily stabilization</p>
+                    <div class="chains-grid">
+                        <!-- ETHEREUM MAINNET -->
+                        <div class="chain-hub-card">
+                            <div class="chain-header">
+                                <div class="chain-meta">
+                                    <i class="fa-brands fa-ethereum chain-logo eth-color"></i>
+                                    <div>
+                                        <h4>Ethereum Mainnet</h4>
+                                        <p class="chain-tag">ERC-20 Token</p>
+                                    </div>
+                                </div>
+                                <span class="chain-badge badge-eth">Active Bridge</span>
+                            </div>
+                            <div class="contract-copy-row">
+                                <input type="text" class="contract-input" value="0xb1110919016846972056ab995054d65560d5f05e" readonly>
+                                <button class="copy-contract-btn" data-clipboard="0xb1110919016846972056ab995054d65560d5f05e" title="Copy Ethereum Contract"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <div class="chain-actions-footer">
+                                <a href="https://etherscan.io/token/0xb1110919016846972056ab995054d65560d5f05e" target="_blank" class="explorer-link" style="color:var(--text-muted); font-size:0.8rem; text-decoration:none;">
+                                    Etherscan <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
+                                <a href="https://app.uniswap.org/#/swap?outputCurrency=0xb1110919016846972056ab995054d65560d5f05e" target="_blank" class="dex-link eth-dex">
+                                    Trade Uniswap <i class="fa-solid fa-right-left"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="velocityChart"></canvas>
+
+                        <!-- BNB SMART CHAIN -->
+                        <div class="chain-hub-card">
+                            <div class="chain-header">
+                                <div class="chain-meta">
+                                    <i class="fa-solid fa-cubes chain-logo bsc-color"></i>
+                                    <div>
+                                        <h4>BNB Smart Chain</h4>
+                                        <p class="chain-tag">BEP-20 Token</p>
+                                    </div>
+                                </div>
+                                <span class="chain-badge badge-bsc">Active Bridge</span>
+                            </div>
+                            <div class="contract-copy-row">
+                                <input type="text" class="contract-input" value="0xdf24f8c21cb404b3031a450d8e049d6e39fc1fa5" readonly>
+                                <button class="copy-contract-btn" data-clipboard="0xdf24f8c21cb404b3031a450d8e049d6e39fc1fa5" title="Copy BNB Chain Contract"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <div class="chain-actions-footer">
+                                <a href="https://bscscan.com/token/0xdf24f8c21cb404b3031a450d8e049d6e39fc1fa5" target="_blank" class="explorer-link" style="color:var(--text-muted); font-size:0.8rem; text-decoration:none;">
+                                    BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
+                                <a href="https://pancakeswap.finance/swap?outputCurrency=0xdf24f8c21cb404b3031a450d8e049d6e39fc1fa5" target="_blank" class="dex-link bsc-dex">
+                                    Trade PancakeSwap <i class="fa-solid fa-right-left"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- NATIVE BILLIONS CHAIN -->
+                        <div class="chain-hub-card native-card-glow">
+                            <div class="chain-header">
+                                <div class="chain-meta">
+                                    <i class="fa-solid fa-circle-nodes chain-logo native-color"></i>
+                                    <div>
+                                        <h4>Billions L1 Network</h4>
+                                        <p class="chain-tag">Native ERC-20 Ledger</p>
+                                    </div>
+                                </div>
+                                <span class="chain-badge badge-native">Native L1 Primary</span>
+                            </div>
+                            <div class="contract-copy-row">
+                                <input type="text" class="contract-input" value="0xb060E40C3B053C33D458f7105F95DA52741CAb62" readonly>
+                                <button class="copy-contract-btn" data-clipboard="0xb060E40C3B053C33D458f7105F95DA52741CAb62" title="Copy Native Contract"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                            <div class="chain-actions-footer">
+                                <a href="https://explorer.billions.network/token/0xb060E40C3B053C33D458f7105F95DA52741CAb62" target="_blank" class="explorer-link" style="color:var(--text-muted); font-size:0.8rem; text-decoration:none;">
+                                    Blockscout Scan <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
+                                <a href="https://explorer.billions.network/" target="_blank" class="dex-link native-dex">
+                                    Stake & Hook <i class="fa-solid fa-link"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </section>
+
+                <!-- DYNAMIC GRAPH & GLOBAL HOLDERS LEADERBOARD -->
+                <div class="token-holders-layout">
+                    <!-- Left Column: Claim Brackets -->
+                    <div class="panel-card chart-panel" style="padding: 24px;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-chart-pie"></i> ALLOCATION BRACKET RATIOS</h2>
+                            <p class="panel-sub">Division of claimed supply between retail participants and whale tiers</p>
+                        </div>
+                        <div class="chart-container" style="position:relative; height:240px; margin-top:20px;">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                        <div id="bracket-details-grid" class="bracket-details-grid" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+                            <!-- Populated dynamically via app.js -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Top 5 Global On-Chain Holders -->
+                    <div class="panel-card holders-panel" style="padding: 24px;">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-users-viewfinder"></i> TOP GLOBAL ON-CHAIN HOLDERS ($BILL)</h2>
+                            <p class="panel-sub">Rankings of largest contract addresses and bridges on-chain</p>
+                        </div>
+                        <div class="table-container" style="margin-top:20px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Holder Entity / Wallet</th>
+                                        <th>Total Holding ($BILL)</th>
+                                        <th>Supply Share %</th>
+                                        <th>Lockup Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="global-holders-body">
+                                    <!-- Populated dynamically via app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- TAB PANEL 2: EXPLORER -->
             <div class="tab-panel" id="tab-explorer">
+                <!-- DYNAMIC CLAIM PROGRESS PIE CHART -->
+                <div class="airdrop-progress-layout">
+                    <!-- Left: Dedicated Circle Graph -->
+                    <div class="panel-card chart-panel">
+                        <div class="panel-header">
+                            <h2><i class="fa-solid fa-chart-pie"></i> COMMUNITY CLAIM PROGRESS</h2>
+                            <p class="panel-sub">Claimed/staked ratio of the 100.92M BILL community pool</p>
+                        </div>
+                        <div class="chart-container" style="position:relative; height:200px; margin-top:20px;">
+                            <canvas id="airdropClaimChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Quick Airdrop Metrics & Intel -->
+                    <div class="panel-card metrics-panel">
+                        <div>
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-circle-info"></i> COMMUNITY CLAIM POOL INTEL</h2>
+                                <p class="panel-sub">Current distribution metrics of the L1 community airdrop</p>
+                            </div>
+                            <div class="risk-metrics">
+                                <div class="modal-stat-box" style="text-align: left; padding: 10px 14px;">
+                                    <span class="m-label" style="font-size: 0.6rem;">Total Allocation</span>
+                                    <span class="m-value" style="font-size: 1.15rem; color: #fff;">100,923,053.37 BILL</span>
+                                </div>
+                                <div class="modal-stat-box" style="text-align: left; padding: 10px 14px;">
+                                    <span class="m-label" style="font-size: 0.6rem;">Unique Claimants</span>
+                                    <span class="m-value" style="font-size: 1.15rem; color: var(--color-primary);">9,344 Wallets</span>
+                                </div>
+                                <div class="modal-stat-box" style="text-align: left; padding: 10px 14px;">
+                                    <span class="m-label" style="font-size: 0.6rem;">Claimed & Staked</span>
+                                    <span id="airdrop-claimed-val" class="m-value" style="font-size: 1.15rem; color: #00f2fe;">80,517,940.30 BILL</span>
+                                </div>
+                                <div class="modal-stat-box" style="text-align: left; padding: 10px 14px;">
+                                    <span class="m-label" style="font-size: 0.6rem;">Unclaimed Reserves</span>
+                                    <span id="airdrop-unclaimed-val" class="m-value" style="font-size: 1.15rem; color: #00e676;">20,405,113.07 BILL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: rgba(0, 242, 254, 0.03); border: 1px solid rgba(0, 242, 254, 0.1); border-radius: var(--border-radius-md); padding: 10px 12px; font-size: 0.78rem; line-height: 1.4; color: var(--text-muted); margin-top: 15px;">
+                            <i class="fa-solid fa-circle-exclamation" style="color: var(--color-primary); margin-right: 6px;"></i>
+                            All community claims are <strong>automatically locked and staked</strong> in the Staking Vault proxy until October 31, 2026. This guarantees zero immediate market sell pressure.
+                        </div>
+                    </div>
+                </div>
+
                 <!-- MAIN TABLE EXPLORER CARD -->
                 <section class="panel-card explorer-panel">
                     <div class="explorer-header-actions">
@@ -203,6 +350,20 @@
                         </div>
                         
                         <div class="filter-controls">
+                            <select id="status-filter" class="filter-select">
+                                <option value="all">All Claim Statuses</option>
+                                <option value="claimed">Claimed & Staked</option>
+                                <option value="unclaimed">Unclaimed Reserves</option>
+                            </select>
+                            
+                            <select id="allocation-filter" class="filter-select">
+                                <option value="all">All Allocation Types</option>
+                                <option value="Community Airdrop">Community Airdrop</option>
+                                <option value="Ecosystem Staking Rewards">Ecosystem Staking</option>
+                                <option value="Bounty & Contributor">Bounties & Contrib</option>
+                                <option value="Early Supporter Bonus">Early Supporters</option>
+                            </select>
+
                             <select id="bracket-filter" class="filter-select">
                                 <option value="all">All Tiers / Brackets</option>
                                 <option value="whale">Whales (>= 1M BILL)</option>
@@ -229,8 +390,10 @@
                                 <tr>
                                     <th class="sortable" data-sort="rank">Rank <i class="fa-solid fa-sort"></i></th>
                                     <th class="sortable" data-sort="address">Claimant Wallet Address <i class="fa-solid fa-sort"></i></th>
-                                    <th class="sortable active-sort" data-sort="amount">Allocated Amount ($BILL) <i class="fa-solid fa-sort-down"></i></th>
-                                    <th class="sortable" data-sort="timestamp">Claim Date & Time (UTC) <i class="fa-solid fa-sort"></i></th>
+                                    <th class="sortable" data-sort="category">Category <i class="fa-solid fa-sort"></i></th>
+                                    <th class="sortable active-sort" data-sort="amount">Amount ($BILL) <i class="fa-solid fa-sort-down"></i></th>
+                                    <th class="sortable" data-sort="status">Status <i class="fa-solid fa-sort"></i></th>
+                                    <th class="sortable" data-sort="timestamp">Date & Time (UTC) <i class="fa-solid fa-sort"></i></th>
                                     <th>Tx Details</th>
                                 </tr>
                             </thead>
@@ -385,7 +548,7 @@
                             </div>
                         </div>
                         <div class="risk-assessment-narrative">
-                            <strong>Risk Assessment Narrative:</strong> The $BILL token has **extremely low sell pressure** due to a comprehensive mandatory staking program for TGE claimants. All claimed rewards are programmatically locked until October 31, 2026. Therefore, no airdrop recipient can liquidate or dump tokens on the open market, making the token short-term immune to supply dumps from claimants.
+                            <strong>Risk Assessment Narrative:</strong> The $BILL token has <strong>extremely low sell pressure</strong> due to a comprehensive mandatory staking program for TGE claimants. All claimed rewards are programmatically locked until October 31, 2026. Therefore, no airdrop recipient can liquidate or dump tokens on the open market, making the token short-term immune to supply dumps from claimants.
                         </div>
                     </div>
                 </div>
@@ -399,11 +562,65 @@
         </main>
     </div>
 
+    <!-- Futuristic Cyberpunk Modal Overlay for On-Chain Holder Intel -->
+    <div id="details-modal" class="modal-overlay">
+        <div class="modal-content panel-card">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div class="modal-header" style="display: flex; flex-direction: column; align-items: flex-start;">
+                <span id="modal-rank" class="modal-badge">🥇 #1</span>
+                <h2 id="modal-entity-name" style="font-size: 1.4rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                    Core Ecosystem Reserves
+                </h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-stat-row">
+                    <div class="modal-stat-box">
+                        <span class="m-label">BALANCE</span>
+                        <span id="modal-balance" class="m-value">8,880,066,946.63 BILL</span>
+                    </div>
+                    <div class="modal-stat-box">
+                        <span class="m-label">SUPPLY SHARE</span>
+                        <span id="modal-share" class="m-value">88.8007%</span>
+                    </div>
+                </div>
+                
+                <div class="modal-details-grid">
+                    <div class="detail-item">
+                        <span class="d-label"><i class="fa-solid fa-lock"></i> Lockup Status</span>
+                        <span id="modal-lockup-status" class="d-value">Contractually Locked</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="d-label"><i class="fa-solid fa-shield-halved"></i> Governance</span>
+                        <span id="modal-governance" class="d-value">Gnosis Safe 5-of-9 Multi-Sig</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="d-label"><i class="fa-solid fa-calendar-days"></i> Release Schedule</span>
+                        <span id="modal-release" class="d-value">Linear Monthly Vesting (48 Months)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="d-label"><i class="fa-solid fa-circle-nodes"></i> On-Chain Registry</span>
+                        <span id="modal-address" class="d-value font-mono" style="font-size:0.75rem; word-break:break-all;">0x011a...33cd</span>
+                    </div>
+                </div>
+                
+                <div class="detail-narrative">
+                    <span class="n-label"><i class="fa-solid fa-circle-info"></i> Strategic Utility & Description</span>
+                    <p id="modal-utility">Utility description goes here...</p>
+                </div>
+            </div>
+            <div class="modal-footer-btn">
+                <a href="#" id="modal-explorer-link" target="_blank" class="explorer-link" style="display: flex; align-items: center; gap: 8px;">
+                    Verify Contract on Blockscout L1 Explorer <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast for Copy to Clipboard -->
     <div id="toast" class="toast">Address copied to clipboard!</div>
 
     <!-- Inject data and app scripts -->
     <script src="data.js"></script>
-    <script src="app.js"></script>
+    <script src="app_v2.js"></script>
 </body>
 </html>
