@@ -8,10 +8,6 @@
 
 const TOTAL_ALLOCATED_SUPPLY = 100923053.37; // Total allocated $BILL rewards supply
 
-// Dynamic cross-chain bridge supplies fetched live from Ethereum & BNB Chain nodes
-let liveEthBridgeSupply = 542010000.00;
-let liveBscBridgeSupply = 415000000.00;
-
 // Application state management
 let state = {
     filteredData: [],
@@ -1011,8 +1007,8 @@ function initGlobalHolders() {
     claimsData.forEach(c => totalTokens += c.amount);
     
     const ecosystemReserves = 8880066946.63;
-    const ethBridge = liveEthBridgeSupply;
-    const bscBridge = liveBscBridgeSupply;
+    const ethBridge = 542010000.00;
+    const bscBridge = 415000000.00;
     const teamVesting = 62000000.00;
     
     // Hardcoded major supply contracts and bridges representing global states
@@ -1422,9 +1418,6 @@ async function syncLatestClaims() {
         elements.countdownTimer.innerText = "Syncing...";
     }
     
-    // Trigger parallel cross-chain bridge supply updates from Ethereum & BNB Chain nodes
-    fetchLiveCrossChainSupplies();
-    
     const distributorAddress = "0x4BB63E4E1AcC5750FD1a6aDF26520126D8c9d6C8";
     const url = `https://explorer.billions.network/api/v2/addresses/${distributorAddress}/transactions`;
     
@@ -1618,63 +1611,6 @@ function initVirtualClaimsDb() {
     });
 }
 
-/**
- * Fetches the real-time circulating wrapped supplies of $BILL on Ethereum and BNB Chain
- * dynamically using free public keyless JSON-RPC eth_call requests.
- */
-async function fetchLiveCrossChainSupplies() {
-    // 1. Fetch Ethereum Wrapped Supply via public keyless RPC
-    try {
-        const res = await fetch("https://ethereum.publicnode.com", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                jsonrpc: "2.0",
-                method: "eth_call",
-                params: [{ to: "0xb1110919016846972056ab995054d65560d5f05e", data: "0x18160ddd" }, "latest"],
-                id: 1
-            })
-        });
-        if (res.ok) {
-            const data = await res.json();
-            if (data && data.result) {
-                const supplyWei = BigInt(data.result);
-                liveEthBridgeSupply = Number(supplyWei / BigInt(1e14)) / 10000;
-                console.log("Live ETH Bridge Supply updated:", liveEthBridgeSupply);
-            }
-        }
-    } catch (e) {
-        console.error("Failed to fetch live Ethereum supply:", e);
-    }
-
-    // 2. Fetch BNB Chain Wrapped Supply via public keyless RPC
-    try {
-        const res = await fetch("https://bsc-dataseed.binance.org", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                jsonrpc: "2.0",
-                method: "eth_call",
-                params: [{ to: "0xdf24f8c21cb404b3031a450d8e049d6e39fc1fa5", data: "0x18160ddd" }, "latest"],
-                id: 1
-            })
-        });
-        if (res.ok) {
-            const data = await res.json();
-            if (data && data.result) {
-                const supplyWei = BigInt(data.result);
-                liveBscBridgeSupply = Number(supplyWei / BigInt(1e14)) / 10000;
-                console.log("Live BNB Bridge Supply updated:", liveBscBridgeSupply);
-            }
-        }
-    } catch (e) {
-        console.error("Failed to fetch live BNB supply:", e);
-    }
-
-    // Re-render the global on-chain holders table with new dynamic data
-    initGlobalHolders();
-}
-
 // ==========================================================================
 // APPLICATION INITIALIZATION ENTRY POINT
 // ==========================================================================
@@ -1682,9 +1618,6 @@ async function fetchLiveCrossChainSupplies() {
 document.addEventListener('DOMContentLoaded', () => {
     // 0. Build Virtual Database containing all claimed/unclaimed items
     initVirtualClaimsDb();
-    
-    // Fetch initial live cross-chain bridge supplies in parallel
-    fetchLiveCrossChainSupplies();
 
     // 1. Run Dynamic Analytics Calculations & Render Charts
     initAnalytics();
